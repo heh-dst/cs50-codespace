@@ -1,5 +1,4 @@
-ARG TAG
-FROM cs50/codespace:${TAG}
+FROM ghcr.io/cs50/codespace:latest
 
 
 # Unset user
