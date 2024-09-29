@@ -33,17 +33,6 @@ if [ "$(whoami)" != "root" ]; then
         done
     }
 
-    # Configure prompt
-    _prompt() {
-        local dir="$(dirs +0)" # CWD with ~ for home
-        dir="${dir%/}/" # Remove trailing slash (in case in /) and then re-append
-        dir=${dir#"/workspaces/$RepositoryName/"} # Left-trim workspace
-        dir="${dir} $ " # Add prompt
-        dir=${dir#" "} # Trim leading whitespace (in case in workspace)
-        echo -n "${dir}"
-    }
-    PS1='$(_prompt)'
-
     # Alias BFG
     alias bfg="java -jar /opt/share/bfg-1.14.0.jar"
 
@@ -68,15 +57,6 @@ if [ "$(whoami)" != "root" ]; then
     # https://stackoverflow.com/a/64868901
     command git config --global --replace-all credential.helper ""
     command git config --global --add credential.helper /opt/cs50/bin/gitcredential_github.sh
-
-    # Discourage use of git in repository
-    git() {
-        if [[ "$PWD/" =~ ^/workspaces/"$RepositoryName"/ ]]; then
-            echo "You are in a repository managed by CS50. Git is disabled. See https://cs50.ly/git."
-        else
-            command git "$@"
-        fi
-    }
 
     # Rewrite URLs in stdout
     http-server() {
