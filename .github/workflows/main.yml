@@ -3,7 +3,7 @@ on:
   - workflow_dispatch
 jobs:
   build:
-    runs-on: ubuntu-latest-64-cores
+    runs-on: ubuntu-latest
     steps:
 
       - name: Checkout
@@ -35,15 +35,15 @@ jobs:
           export TAG=amd64
           export VCS_REF=$(git rev-parse HEAD)
           npm install -g @devcontainers/cli
-          devcontainer build --workspace-folder . --config devcontainer.json --image-name cs50/codespace:${{ github.sha }} --image-name cs50/codespace:latest
+          devcontainer build --workspace-folder . --config devcontainer.json --image-name heh-dst/cs50-codespace:${{ github.sha }} --image-name heh-dst/cs50-codespace:latest
 
       - name: Push (latest) to GitHub Packages
         if: ${{ github.ref == 'refs/heads/main' }}
         run: |
-          docker tag cs50/codespace:${{ github.sha }} ghcr.io/cs50/codespace:${{ github.sha }}
-          docker tag cs50/codespace:latest ghcr.io/cs50/codespace:latest
-          docker push ghcr.io/cs50/codespace:${{ github.sha }}
-          docker push ghcr.io/cs50/codespace:latest
+          docker tag heh-dst/cs50-codespace:${{ github.sha }} ghcr.io/heh-dst/cs50-codespace:${{ github.sha }}
+          docker tag heh-dst/cs50-codespace:latest ghcr.io/heh-dst/cs50-codespace:latest
+          docker push ghcr.io/heh-dst/cs50-codespace:${{ github.sha }}
+          docker push ghcr.io/heh-dst/cs50-codespace:latest
 
       - name: Build (canary)
         if: ${{ github.ref == 'refs/heads/canary' }}
@@ -51,7 +51,7 @@ jobs:
           export TAG=canary
           export VCS_REF=$(git rev-parse HEAD)
           npm install -g @devcontainers/cli
-          devcontainer build --workspace-folder . --config devcontainer.json --image-name cs50/codespace:${{ github.sha }} --image-name cs50/codespace:${{ github.ref_name }}
+          devcontainer build --workspace-folder . --config devcontainer.json --image-name heh-dst/cs50-codespace:${{ github.sha }} --image-name heh-dst/cs50-codespace:${{ github.ref_name }}
 
       - name: Build (${{ github.ref_name}})
         if: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/canary' }}
@@ -59,19 +59,19 @@ jobs:
           export TAG=amd64
           export VCS_REF=$(git rev-parse HEAD)
           npm install -g @devcontainers/cli
-          devcontainer build --workspace-folder . --config devcontainer.json --image-name cs50/codespace:${{ github.sha }} --image-name cs50/codespace:${{ github.ref_name }}
+          devcontainer build --workspace-folder . --config devcontainer.json --image-name heh-dst/cs50-codespace:${{ github.sha }} --image-name heh-dst/cs50-codespace:${{ github.ref_name }}
 
       - name: Squash (${{ github.ref_name }})
         if: ${{ github.ref != 'refs/heads/main' }}
         run: |
           pip3 install docker-squash
-          docker-squash --tag cs50/codespace:${{ github.ref_name }} cs50/codespace:${{ github.ref_name }}
+          docker-squash --tag heh-dst/cs50-codespace:${{ github.ref_name }} heh-dst/cs50-codespace:${{ github.ref_name }}
 
       - name: Push (${{ github.ref_name }}) to GitHub Packages
         if: ${{ github.ref != 'refs/heads/main' }}
         run: |
-          docker tag cs50/codespace:${{ github.ref_name }} ghcr.io/cs50/codespace:${{ github.ref_name }}
-          docker push ghcr.io/cs50/codespace:${{ github.ref_name }}
+          docker tag heh-dst/cs50-codespace:${{ github.ref_name }} ghcr.io/heh-dst/cs50-codespace:${{ github.ref_name }}
+          docker push ghcr.io/heh-dst/cs50-codespace:${{ github.ref_name }}
 
       - name: Tag main as latest
         if: ${{ github.ref == 'refs/heads/main' }}

@@ -4,7 +4,7 @@
 if [ "$1" == "-t" ]; then
     # Use the specified tag to build the URL
     tag=$2
-    url="https://cs50.dev/devcontainer.json?tag=$tag"
+    url="https://raw.githubusercontent.com/heh-dst/cs50-codespace-template/refs/tags/$tag/.devcontainer.json"
 
     # Fetch and save the JSON
     curl --fail --header "Cache-Control: no-cache" --silent --location "$url" > "/workspaces/$RepositoryName/.devcontainer.json"
@@ -17,7 +17,7 @@ if [ "$1" == "-t" ]; then
 fi
 
 # Get remote JSON
-remote=$(curl --fail --header "Cache-Control: no-cache" --silent --location https://cs50.dev/devcontainer.json)
+remote=$(curl --fail --header "Cache-Control: no-cache" --silent --location https://raw.githubusercontent.com/heh-dst/cs50-codespace-template/refs/heads/main/.devcontainer.json)
 if [ $? -ne 0 ]; then
     echo "Could not update codespace. Try again later."
     exit 1
@@ -25,7 +25,7 @@ fi
 
 # Parse remote JSON
 image=$(echo $remote | jq .image 2> /dev/null)
-regex='"ghcr.io/cs50/codespace:([0-9a-z]*)"'
+regex='"ghcr.io/heh-dst/cs50-codespace:([0-9a-z]*)"'
 if [[ "$image" =~ $regex ]]; then
     tag="${BASH_REMATCH[1]}"
 else
